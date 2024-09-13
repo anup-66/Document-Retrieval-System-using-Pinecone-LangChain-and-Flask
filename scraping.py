@@ -5,3 +5,4 @@ print(key)
 url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={key}"
 a = requests.get(url).json()
 print(a)
+from sentence_transformers import SentenceTransformer
