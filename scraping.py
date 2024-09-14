@@ -4,11 +4,6 @@ import requests
 import os
 from fpdf import FPDF
 from search_document import data_loading,single_file_loading
-# print(key)
-# url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={key}"
-# a = requests.get(url).json()
-# print(a)
-from sentence_transformers import SentenceTransformer
 
 from threading import Thread
 class Scraper(Thread):
@@ -48,9 +43,6 @@ class Scraper(Thread):
         pdf.cell(200,10,txt = "News",ln = True,align = "C")
         for new in news:
             source,title,desc = new
-            # print(source)
-            # print(title)
-            # print(desc)
             source = self.clean_text(source.get("name",""))
             if title:
                 title =self.clean_text(title)
@@ -71,6 +63,3 @@ class Scraper(Thread):
         pdf.output(output_path)
         self.count+=1
         single_file_loading(output_file,self.count)
-
-# pdf_maker = Scraper()
-# pdf_maker.scrape_articles()

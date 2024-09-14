@@ -6,12 +6,14 @@
 <body>
     <h1>Matches Data</h1>
     <table border="1">
+
         <tr>
             <th>ID</th>
             <th>Page</th>
             <th>Source</th>
             <th>Score</th>
             <th>Values</th>
+            <th>Time</th>
         </tr>
         {% for match in data.matches %}
         <tr>
@@ -20,6 +22,7 @@
             <td>{{ match.metadata.source }}</td>
             <td>{{ match.score }}</td>
             <td>{{ match.values | join(', ') }}</td>
+            <td>{{time}}</td>
         </tr>
         {% endfor %}
     </table>

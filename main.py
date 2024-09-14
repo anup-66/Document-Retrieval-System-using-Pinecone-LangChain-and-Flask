@@ -4,11 +4,9 @@ from flask import Flask, jsonify, request, abort, render_template
 from flask_cors import CORS
 from search_document import query
 from flask_sqlalchemy import SQLAlchemy
-# from database_architecture import User
 from datetime import datetime
 from pinecone import Pinecone
 from cache import get_cache,set_cache
-from scraping import Scraper
 
 app = Flask(__name__)
 CORS(app)
@@ -18,10 +16,9 @@ app.config["LIMIT"] = 5
 db = SQLAlchemy(app)
 pc = Pinecone(
     api_key ="ff392e8b-ee20-4d42-8b41-deea1a96a624",
-    # region = "us-east-1"
+
 )
 
-# print(embed(model,docs))
 index_name = "ragllm"
 index = pc.Index(index_name)
 class User(db.Model):
@@ -64,13 +61,14 @@ def find():
     # print(cache_key)
     cache_res = get_cache(cache_key)
     if cache_res:
-        return jsonify({"message":str(cache_res),"time":(time.time()-start_time)}),200
+        return render_template('index.html',data = jsonify(cache_res),time = (time.time()-start_time))
     start_time = time.time()
     result = query(index,q,k,threshold)
-    set_cache(key=cache_key,value = str(result))
     # print(result)
-    return render_template('index.html', data=result)
-    # return jsonify({"messsage":result,"time":time.time()-start_time})
+    filtered_data = {"matches":[match for match in result['matches'] if match['score'] > threshold]}
+    # print(filtered_data)
+    set_cache(key=cache_key,value = str(filtered_data))
+    return render_template('index.html', data=filtered_data,time = (time.time()-start_time))
 
 if __name__=="__main__":
     # scraper = Scraper()

@@ -1,21 +1,12 @@
-import os
-
-import openai
-import langchain
 from pinecone import Pinecone
 from langchain.document_loaders import PyPDFDirectoryLoader, PyPDFLoader
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import Pinecone as pd
-from langchain.llms import OpenAI
-from dotenv import load_dotenv
-# Pinecone()
+
 from sentence_transformers import SentenceTransformer
 
-# from database_architecture import insert,search
 pc = Pinecone(
-    api_key="ff392e8b-ee20-4d42-8b41-deea1a96a624",
-    # region = "us-east-1"
+    api_key="ff392e8b-ee20-4d42-8b41-deea1a96a624"
 )
 
 # print(embed(model,docs))
@@ -78,11 +69,5 @@ def query(index, q, k, threshold):
         include_values=True,
         include_metadata=True
     )
-    # ind
 
     return res
-# print(model.encode("European iPad users can soon download apps from third-party stores").tolist())
-print(query(index,"European iPad users can soon download apps from third-party",5,0.5))
-# index.upsert(vectors=model.encode("i am happy").tolist()[0], namespace="collection1")
-
-# print(single_file_loading("E:/21bce7985_ML/document_pdf/news6.pdf",count = 15)[0]["values"][:5])
