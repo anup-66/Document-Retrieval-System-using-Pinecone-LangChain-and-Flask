@@ -1,8 +1,8 @@
-#Document Retrieval System using Pinecone, LangChain, and Flask
+# Document Retrieval System using Pinecone, LangChain, and Flask
 This is a Flask-based document retrieval system built with Pinecone for vector search and LangChain for document processing. The application scrapes news articles, converts them into PDF format, and embeds them into a Pinecone vector database for efficient searching using OpenAI embeddings. The application also supports caching with Redis to improve performance for frequently queried search terms.
 
-Table of Contents
-Overview
+## Table of Contents
+### Overview
 Technologies Used
 File Structure
 Setup Instructions
