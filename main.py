@@ -8,6 +8,8 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from pinecone import Pinecone
 from cache import get_cache,set_cache
+from scraping import Scraper
+
 app = Flask(__name__)
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:anup%406536@localhost/document_retrieval"
@@ -62,12 +64,15 @@ def find():
     print(cache_key)
     cache_res = get_cache(cache_key)
     if cache_res:
-        return jsonify({"message":cache_res,"time":(time.time()-start_time)}),200
+        return jsonify({"message":str(cache_res),"time":(time.time()-start_time)}),200
     start_time = time.time()
     result = query(index,q,k,threshold)
     set_cache(key=cache_key,value = str(result))
     print(result)
-    return jsonify({"messsage":result["matches"],"time":time.time()-start_time})
+
+    return jsonify({"messsage":result,"time":time.time()-start_time})
 
 if __name__=="__main__":
+    # scraper = Scraper()
+    # scraper.start()
     app.run(debug=True)
