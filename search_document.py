@@ -2,7 +2,7 @@ import os
 
 import openai
 import langchain
-from pinecone import Pinecone,ServerlessSpec
+from pinecone import Pinecone
 from langchain.document_loaders import PyPDFDirectoryLoader
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -26,13 +26,13 @@ def chunking(docs,size = 1000,overlap = 60):
     docs = split_.split_documents(docs)
     return docs
 
-doc = read_file("E:/21bce7985_ML/document_pdf/")
-docs = chunking(docs=doc)
-key = os.environ["OPENAI_API_KEY"]
-# embedings = OpenAIEmbeddings(openai_api_key = key)
-# print(embedings)
-# ans = embedings.embed_query("how are you")
-# print(ans)
+def dataloading(directory):
+
+    # doc = read_file("E:/21bce7985_ML/document_pdf/")
+    doc = read_file(directory)
+    docs = chunking(docs=doc)
+    embeded = embed(model,docs)
+    return embeded
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 def embed(model,docs):
@@ -59,21 +59,22 @@ pc = Pinecone(
 # print(embed(model,docs))
 index_name = "ragllm"
 index = pc.Index(index_name)
-def upload_data(index_name,pc):
+def upload_data(index,docs):
 
     # index = pc.create_collection(docs,model,index_name=index_name)
     index.upsert(vectors = embed(model,docs),namspace="collection1")
-    print(index)
-def query(index,query,k,threshold):
+    # print(index)
+# upload_data(index,index_name)
+def query(index,q,k,threshold):
     res = index.query(
         namespace = "collection1",
-        vector = model.encode(query).tolist()[0],
+        vector = model.encode(q).tolist()[0],
         top_k = 5,
         include_values = True,
         include_metadata = True
     )
     return res
-print(query(index,"We have three primary different types of dish available.",3,0.23))
+# print(query(index,"We have three primary different types of dish available.",3,0.23))
 # def add_document(title,content):
 #     embedding = model.encode(content).tolist()
 #     insert(title,content)
