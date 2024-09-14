@@ -1,3 +1,7 @@
+import json
+#
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 import weaviate
 client = weaviate.Client("http://localhost:8080")
@@ -27,17 +31,14 @@ def search(query,k,max_dist):
                 .with_near_vector({"vector":query,"distance":max_dist}).with_additional(["distance"]).with_limit(k).do()
 
 
-# import json
-#
-# from flask_sqlalchemy import SQLAlchemy
-# from datetime import datetime
-# db = SQLAlchemy()
-# class User(db.Model):
-#     id = db.Column(db.Integer,primary_key =True)
-#     user_id = db.Column(db.Integer,unique =True,nullable = False)
-#     api_calls = db.Column(db.Integer,default=1)
-#     logs = db.Column(db.DateTime,default = datetime.utcnow)
-#
+db = SQLAlchemy()
+class User(db.Model):
+    id = db.Column(db.Integer,primary_key =True)
+    user_id = db.Column(db.Integer,unique =True,nullable = False)
+    api_calls = db.Column(db.Integer,default=1)
+    logs = db.Column(db.DateTime,default = datetime.utcnow)
+
+
 # class Document(db.Model):
 #     id = db.Column(db.Integer,primary_key = True)
 #     title = db.Column(db.String(100))
