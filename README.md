@@ -24,14 +24,22 @@ Searching through the stored documents using a custom query and threshold.
 The core feature is the document search based on Pinecone’s vector database, enhanced by caching to reduce redundant processing. This project leverages several libraries, such as LangChain for document processing, Redis for caching, and Pinecone for vector search.
 
 ## Technologies Used
-### Flask: Backend framework for handling API requests.
-### Pinecone: A vector database to perform fast similarity searches on embeddings.
-### LangChain: Used for document processing (PDF splitting and chunking).
-### Redis: In-memory cache for speeding up repetitive queries.
-### SentenceTransformers: Used to generate embeddings from text using the all-MiniLM-L6-v2 model.
-### MySQL: To store user information and limit the number of API calls per user.
-### FPDF: For generating PDFs from scraped articles.
-### NewsAPI: Used for scraping live news articles.
+### Flask: 
+Backend framework for handling API requests.
+### Pinecone: 
+A vector database to perform fast similarity searches on embeddings.
+### LangChain:
+Used for document processing (PDF splitting and chunking).
+### Redis: 
+In-memory cache for speeding up repetitive queries.
+### SentenceTransformers: 
+Used to generate embeddings from text using the all-MiniLM-L6-v2 model.
+### MySQL: 
+To store user information and limit the number of API calls per user.
+### FPDF: 
+For generating PDFs from scraped articles.
+### NewsAPI: 
+Used for scraping live news articles.
 ```
 .
 ├── cache.py                # Redis-based caching implementation
@@ -43,37 +51,37 @@ The core feature is the document search based on Pinecone’s vector database, e
 
 ```
 ## File Descriptions
-main.py:
-
+### main.py:
 This is the main entry point of the Flask application.
 It handles HTTP requests and serves as the API layer.
 The key functionalities include checking rate limits, querying the vector database, and caching results.
 It also manages user interactions and logs the number of API calls per user using SQLAlchemy with MySQL as the database.
-search_document.py:
 
+### search_document.py:
 This file handles all document-related operations.
 It loads PDF documents, chunks them into smaller text segments, and embeds them into the Pinecone database.
 It provides search functionality where queries are embedded and matched against stored vectors using cosine similarity.
-scraping.py:
 
+### scraping.py:
 Responsible for scraping news articles from an external API (NewsAPI) and converting the content into PDFs.
 Runs in a separate thread, periodically scraping new articles.
 Each scraped article is saved as a PDF and uploaded to the Pinecone database after embedding.
-cache.py:
 
+### cache.py:
 Implements caching functionality using Redis.
 Speeds up frequent search queries by storing the results temporarily and retrieving them from the cache when available, reducing the need for repeated searches.
-Setup Instructions
+
+### Setup Instructions
 1. Clone the repository
 ```
 git clone <repository-url>
 cd <repository-directory>
 ```
-3. Install the required dependencies
+2. Install the required dependencies
 ```
 pip install -r requirements.txt
 ```
-5. Set up environment variables
+3. Set up environment variables
 You will need the following environment variables:
 ```
 PINECONE_API_KEY: Your Pinecone API key for vector database operations.
@@ -128,8 +136,4 @@ k: Number of top results to return.
 threshold: Minimum similarity score to include results.
 Response: JSON object containing the matching documents, with metadata and similarity scores.
 ```
-### Future Enhancements
-Authentication: Add OAuth or API key-based authentication to secure the API.
-Pagination: Implement pagination for search results to handle large datasets.
-ElasticSearch Integration: Use ElasticSearch alongside Pinecone for indexing and retrieval of metadata.
-Scalable Deployment: Deploy the app using a Kubernetes cluster for horizontal scalability.
+
