@@ -1,3 +1,4 @@
+import os
 import time
 
 from flask import Flask, jsonify, request, abort, render_template
@@ -7,16 +8,18 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from pinecone import Pinecone
 from cache import get_cache,set_cache
-
+from scraping import Scraper
 app = Flask(__name__)
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:anup%406536@localhost/document_retrieval"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["LIMIT"] = 5
+app.config["PINECONE_API_KEY"] = os.environ.get(
+    "PINECONE_API_KEY"
+)
 db = SQLAlchemy(app)
 pc = Pinecone(
-    api_key ="ff392e8b-ee20-4d42-8b41-deea1a96a624",
-
+    api_key =app.config["PINECONE_API_KEY"],
 )
 
 index_name = "ragllm"
@@ -71,6 +74,6 @@ def find():
     return render_template('index.html', data=filtered_data,time = (time.time()-start_time))
 
 if __name__=="__main__":
-    # scraper = Scraper()
-    # scraper.start()
+    scraper = Scraper()
+    scraper.start()
     app.run(debug=True)

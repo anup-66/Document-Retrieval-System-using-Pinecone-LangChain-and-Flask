@@ -1,3 +1,5 @@
+import os
+
 from pinecone import Pinecone
 from langchain.document_loaders import PyPDFDirectoryLoader, PyPDFLoader
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -6,10 +8,9 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
 
 pc = Pinecone(
-    api_key="ff392e8b-ee20-4d42-8b41-deea1a96a624"
+    api_key=os.environ.get("PINECONE_API_KEY")
 )
 
-# print(embed(model,docs))
 index_name = "ragllm"
 index = pc.Index(index_name)
 model = SentenceTransformer('all-MiniLM-L6-v2')
