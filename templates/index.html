@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Rendering</title>
+</head>
+<body>
+    <h1>Matches Data</h1>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Page</th>
+            <th>Source</th>
+            <th>Score</th>
+            <th>Values</th>
+        </tr>
+        {% for match in data.matches %}
+        <tr>
+            <td>{{ match.id }}</td>
+            <td>{{ match.metadata.page }}</td>
+            <td>{{ match.metadata.source }}</td>
+            <td>{{ match.score }}</td>
+            <td>{{ match.values | join(', ') }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

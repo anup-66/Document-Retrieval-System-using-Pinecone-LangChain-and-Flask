@@ -1,6 +1,6 @@
 import time
 
-from flask import Flask,jsonify,request,abort
+from flask import Flask, jsonify, request, abort, render_template
 from flask_cors import CORS
 from search_document import query
 from flask_sqlalchemy import SQLAlchemy
@@ -61,16 +61,16 @@ def find():
         return jsonify({"error":"Rate limit exceeded"}),429
     start_time = time.time()
     cache_key = str(f"{user_id}:{q}")
-    print(cache_key)
+    # print(cache_key)
     cache_res = get_cache(cache_key)
     if cache_res:
         return jsonify({"message":str(cache_res),"time":(time.time()-start_time)}),200
     start_time = time.time()
     result = query(index,q,k,threshold)
     set_cache(key=cache_key,value = str(result))
-    print(result)
-
-    return jsonify({"messsage":result,"time":time.time()-start_time})
+    # print(result)
+    return render_template('index.html', data=result)
+    # return jsonify({"messsage":result,"time":time.time()-start_time})
 
 if __name__=="__main__":
     # scraper = Scraper()
