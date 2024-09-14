@@ -1,6 +1,6 @@
 import numpy as np
 from sentence_transformers import SentenceTransformer
-from database_architecture import Document
+# from database_architecture import Document
 class Search:
     def __init__(self):
         self.encoder = SentenceTransformer("all-MiniLM-L6-v2")
