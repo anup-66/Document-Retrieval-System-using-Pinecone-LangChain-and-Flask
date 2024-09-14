@@ -1,3 +1,5 @@
+import time
+
 from flask import Flask,jsonify,request,abort
 from flask_cors import CORS
 from search_document import query
@@ -5,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 # from database_architecture import User
 from datetime import datetime
 from pinecone import Pinecone
+from cache import get_cache,set_cache
 app = Flask(__name__)
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:anup%406536@localhost/document_retrieval"
@@ -51,11 +54,20 @@ def find():
     q = request.args.get("query","")
     k = request.args.get("k",5,type=int)
     threshold = request.args.get("threshold",0.5,type=float)
+
     if check_user_limit(user_id):
         return jsonify({"error":"Rate limit exceeded"}),429
+    start_time = time.time()
+    cache_key = str(f"{user_id}:{q}")
+    print(cache_key)
+    cache_res = get_cache(cache_key)
+    if cache_res:
+        return jsonify({"message":cache_res,"time":(time.time()-start_time)}),200
+    start_time = time.time()
     result = query(index,q,k,threshold)
+    set_cache(key=cache_key,value = str(result))
     print(result)
-    return jsonify({"messsage":result["matches"]})
+    return jsonify({"messsage":result["matches"],"time":time.time()-start_time})
 
 if __name__=="__main__":
     app.run(debug=True)
