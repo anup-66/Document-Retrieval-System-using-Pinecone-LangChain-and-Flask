@@ -1,20 +1,20 @@
 # Document Retrieval System using Pinecone, LangChain, and Flask
-This is a Flask-based document retrieval system built with Pinecone for vector search and LangChain for document processing. The application scrapes news articles, converts them into PDF format, and embeds them into a Pinecone vector database for efficient searching using OpenAI embeddings. The application also supports caching with Redis to improve performance for frequently queried search terms.
+This is a Flask-based document retrieval system built with Pinecone for vector search and LangChain for document processing. The application use seperate thread to scrapes news articles, converts them into PDF format, and embeds them into a Pinecone vector database for efficient searching using Sentence Transformer embeddings. The application also supports caching with Redis to improve performance for frequently queried search terms.
 
 ## Table of Contents
-### Overview
-Technologies Used
-File Structure
-Setup Instructions
-Usage
-Techniques Used
-Pinecone Vector Search
-Document Processing with LangChain
-Caching with Redis
-Rate Limiting
-API Endpoints
-Future Enhancements
-Overview
++ Overview
++ Technologies Used
++ File Structure
++ Setup Instructions
++ Usage
++ Techniques Used
+  - Pinecone Vector Search
+  - Document Processing with LangChain
+  - Caching with Redis
+  - Rate Limiting
++ API Endpoints
++ Future Enhancements
+### Overview 
 This project is a full-stack document retrieval application that supports:
 
 Scraping live news articles from the web.
@@ -42,6 +42,7 @@ For generating PDFs from scraped articles.
 Used for scraping live news articles.
 ```
 .
+├── templates               # Directory for storing the html page
 ├── cache.py                # Redis-based caching implementation
 ├── main.py                 # The main Flask application
 ├── requirements.txt        # Python dependencies
@@ -71,7 +72,7 @@ Each scraped article is saved as a PDF and uploaded to the Pinecone database aft
 Implements caching functionality using Redis.
 Speeds up frequent search queries by storing the results temporarily and retrieving them from the cache when available, reducing the need for repeated searches.
 
-### Setup Instructions
+## Setup Instructions
 1. Clone the repository
 ```
 git clone <repository-url>
@@ -96,7 +97,7 @@ Make sure to set up your MySQL database, and update the SQLALCHEMY_DATABASE_URI 
 python main.py
 The app will be running at http://127.0.0.1:5000.
 
-### Usage
+## Usage
 Document Uploading:
 When new PDFs are created by the scraper, they are automatically loaded into the Pinecone vector database for fast retrieval.
 Search Functionality:
@@ -120,13 +121,13 @@ Redis is used to cache search results, which optimizes the performance for repea
 ### Rate Limiting
 To prevent abuse of the API, rate limiting is enforced per user. This is managed using a MySQL database where the number of API calls per user is tracked. If a user exceeds the allowed number of calls (LIMIT), their subsequent requests are blocked.
 
-### API Endpoints
-Health Check
+## API Endpoints
+**Health Check**
 ```
 GET /health
 Response: 200 OK if the API is operational.
 ```
-Search Documents
+**Search Documents**
 ```
 GET /search
 Parameters:
@@ -136,4 +137,6 @@ k: Number of top results to return.
 threshold: Minimum similarity score to include results.
 Response: JSON object containing the matching documents, with metadata and similarity scores.
 ```
+## Docker image also created
+![image](https://github.com/user-attachments/assets/439dbff6-25d3-4b5a-92d7-19db1d48d738)
 
