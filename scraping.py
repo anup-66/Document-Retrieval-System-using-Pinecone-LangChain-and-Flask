@@ -12,12 +12,20 @@ class Scraper(Thread):
         self.count = 3
         self.key = os.environ.get("NEWSAPIKEY")
         self.url =  f"https://newsapi.org/v2/top-headlines?country=us&apiKey={self.key}"
-        self.dir = "E:/21bce7985_ML/document_pdf/"
+        current_dir = os.getcwd()
+        new_folder = "document_pdf"
+        try:
+            new_path = os.path.join(current_dir,new_folder).replace("\\","/")
+        except:
+            new_path = "E:/21bce7985_ML/document_pdf"
+        if not os.path.exists(new_path):
+            os.mkdir(new_path)
+        self.dir = new_path
     def run(self):
         while True:
             self.scrape_articles()
-            time.sleep(60)
-
+            time.sleep(60*5)
+    ## This method is used to scrape different articles and news from the news api
     def scrape_articles(self):
         response = requests.get(self.url).json()
         articles = response.get("articles",[])
@@ -36,6 +44,8 @@ class Scraper(Thread):
             return text.encode("latin-1", "ignore").decode("latin-1")
         except UnicodeEncodeError:
             return text.encode("ascii", "ignore").decode("ascii")
+
+    ## This method is used to convert scraped article and news into a pdf file and then get it saved
     def make_pdf(self,news,output_file):
         pdf = FPDF()
         pdf.add_page()

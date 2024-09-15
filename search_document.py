@@ -15,13 +15,13 @@ index_name = "ragllm"
 index = pc.Index(index_name)
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-
-def read_file(directory):
+#To read a all files in directory
+def read_files(directory):
     file = PyPDFDirectoryLoader(directory)
     document = file.load()
     return document
 
-
+# To generate embeding from the documents
 def embed(model, docs,count):
     embeddings = []
     for doc in docs:
@@ -37,12 +37,13 @@ def embed(model, docs,count):
         })
     return embeddings
 
-
+# To generate chunks from the documents
 def chunking(docs, size=100, overlap=60):
     split_ = RecursiveCharacterTextSplitter(chunk_size=size, chunk_overlap=overlap)
     docs = split_.split_documents(docs)
     return docs
 
+# To read and add embedding to the VectorDb Pinecone
 def read_single_file(file_path):
     file = PyPDFLoader(file_path)
     document = file.load()
@@ -51,6 +52,8 @@ def read_single_file(file_path):
     for doc in document:
         str_+=doc.page_content
     return str_
+
+# To load single file to the Pinecone Vector Database
 def single_file_loading(file, size=1000, overlap=60,count=1):
     file = PyPDFLoader(file)
     # print(file)
@@ -60,15 +63,15 @@ def single_file_loading(file, size=1000, overlap=60,count=1):
     embeding = embed(model, document,count)
     # return embeding
     index.upsert(vectors=embeding, namespace="collection1")
-#
 
+# To load Multiple files from the directory to the Vector Database
 def data_loading(directory):
-    doc = read_file(directory)
+    doc = read_files(directory)
     docs = chunking(docs=doc)
     embeding = embed(model, docs)
     index.upsert(vectors=embeding, namespace="collection1")
 
-# print(model.encode("European iPad users can soon download apps from third-party stores ").tolist())
+# To get the top K queries from the vector database to be returned for llm response
 def query(index, q, k, threshold):
     res = index.query(
         namespace="collection1",

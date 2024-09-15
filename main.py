@@ -9,6 +9,8 @@ from pinecone import Pinecone
 from cache import get_cache,set_cache
 from transformers import pipeline
 from scraping import Scraper
+import os
+import google.generativeai as genai
 app = Flask(__name__)
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:anup%406536@localhost/document_retrieval"
@@ -24,6 +26,7 @@ pc = Pinecone(
 
 index_name = "ragllm"
 index = pc.Index(index_name)
+# Y=User Table created for sotring the user information, api cal count and logs.
 class User(db.Model):
     id = db.Column(db.Integer,primary_key =True)
     user_id = db.Column(db.Integer,unique =True,nullable = False)
@@ -33,6 +36,7 @@ class User(db.Model):
 with app.app_context():
     db.create_all()
 
+# Checking if the API cal limit exceeded and updating the databased accordingly
 def check_user_limit(user_id):
     user = User.query.filter_by(user_id=user_id).first()
     flag = False
@@ -46,10 +50,13 @@ def check_user_limit(user_id):
         user.api_calls+=1
     db.session.commit()
     return flag
+
+# Route for checking the working of the api
 @app.route("/health",methods = ["GET"])
 def health():
     return jsonify({"status":"API is ready to serve"}),200
 
+# For searching the vector database and this function will return the top vector matching and also the llm response with query time taken as a html template
 @app.route("/search",methods = ["GET"])
 def find():
     user_id = request.args.get("user_id",None)
@@ -74,8 +81,8 @@ def find():
     answer = get_response(filtered_data,q)
     set_cache(key=cache_key,value = str(filtered_data))
     return render_template('index.html', data=filtered_data,time = (time.time()-start_time),answer=answer)
-import google.generativeai as genai
-import os
+
+# To get the response from the google bert modal
 def get_response(filtered_data,query):
     pdf_file = filtered_data.get("matches")[0].get("metadata").get("source")
     context = read_single_file(pdf_file)
@@ -87,6 +94,8 @@ def get_response(filtered_data,query):
                        messages=f"Based on the given context Answer the question,question:{query}")
 
     return modal.messages[-1]
+
+# to get the response from the GPT-2 modal
 def retrieve_inference(filtered_data,query):
     pdf_file = filtered_data.get("matches")[0].get("metadata").get("source")
     context = read_single_file(pdf_file)
@@ -94,6 +103,7 @@ def retrieve_inference(filtered_data,query):
     response = generator(f"Question:{query}\ncontext:{context}\nAnswer:",max_length=150,num_return_sequence =1)
     return response[0]["generates_text"]
 
+# Main function starts here
 if __name__=="__main__":
     scraper = Scraper()
     scraper.start()

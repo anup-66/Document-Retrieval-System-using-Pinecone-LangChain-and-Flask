@@ -8,3 +8,5 @@ pandas
 numpy
 python-dotenv
 Redis
+google-generativeai
+transformers
