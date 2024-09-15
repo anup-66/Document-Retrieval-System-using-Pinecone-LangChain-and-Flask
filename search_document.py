@@ -43,7 +43,14 @@ def chunking(docs, size=100, overlap=60):
     docs = split_.split_documents(docs)
     return docs
 
-
+def read_single_file(file_path):
+    file = PyPDFLoader(file_path)
+    document = file.load()
+    document = chunking(document)
+    str_ = ""
+    for doc in document:
+        str_+=doc.page_content
+    return str_
 def single_file_loading(file, size=1000, overlap=60,count=1):
     file = PyPDFLoader(file)
     # print(file)
@@ -66,7 +73,7 @@ def query(index, q, k, threshold):
     res = index.query(
         namespace="collection1",
         vector=model.encode(q).tolist(),
-        top_k=5,
+        top_k=k,
         include_values=True,
         include_metadata=True
     )
